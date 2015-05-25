@@ -24,4 +24,7 @@ public class Connection {
 	public double getWei(){
 		return weight;
 	}
+	public void addWei(double del){
+		weight+= del;
+	}
 }

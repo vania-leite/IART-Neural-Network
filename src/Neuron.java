@@ -8,8 +8,10 @@ public class Neuron {
 	private float biasWeight;
 	private double output;
 	private boolean input;
+	private double delta;
 
 	public Neuron(boolean input) {
+		delta=0;
 		output = 0;
 		if (input) {
 			this.input = true;
@@ -54,5 +56,11 @@ public class Neuron {
 	
 	public ArrayList<Connection> getCon(){
 		return inputFrom;
+	}
+	public void setDelta(double del){
+		this.delta=del;
+	}
+	public double getDelta(){
+		return delta;
 	}
 }

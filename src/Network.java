@@ -88,21 +88,35 @@ public class Network {
 	
 	public void updateWeights(){
 		
-		for (int i=0;i< hidenLayers.size() -1;i++) {
+		
+		ArrayList<Neuron> neuronsout = outputLayer.getNeurons();
+		for (int j=0;j< neuronsout.size();j++) {
+			double del = deltaK(outputLayer,j);
+			outputLayer.getNeuron(j).setDelta(del);
+		}
+		
+		
+		for (int i=hidenLayers.size()-1;i>=0;i--) {
+			Layer nextLayer;
 			Layer layer = hidenLayers.get(i);
-			Layer nextLayer = hidenLayers.get(i+1);
+			if(i+1==hidenLayers.size()){
+				nextLayer = outputLayer;
+			}
+			else{
+				nextLayer = hidenLayers.get(i+1);
+			}
 			ArrayList<Neuron> neurons= layer.getNeurons();
 			for (int j=0;j< neurons.size();j++) {
-				
-				System.out.println("deltaj calcualded for node"+j+" in hiden layer "+i+"is: " + deltaJ(layer, j, nextLayer));
+				double del=deltaJ(layer, j, nextLayer);
+				layer.getNeuron(j).setDelta(del);
+				ArrayList<Connection> cons = layer.getNeuron(j).getCon();
+				for (Connection connection : cons) {
+					connection.addWei(-1*Network.ETA*del*connection.getOri().getOutput());//TODO verificar se o outrput e o do neuron certo
+				}
+				System.out.println("deltaj calcualded for node"+j+" in hiden layer "+i+"is: " + del);
 			}
 		}
-		Layer layer = hidenLayers.get(hidenLayers.size()-1);
-		ArrayList<Neuron> neurons=layer.getNeurons();
-		for (int j=0;j< neurons.size();j++) {
-			
-			System.out.println("deltaj calcualded for node"+j+" in the last hiden layer is: " + deltaJ(layer, j, outputLayer));
-		}		
+
 	}
 	
 	private double deltaK(Layer layer,int k){
@@ -121,7 +135,7 @@ public class Network {
 			ArrayList<Connection> con = nextLayer.getNeuron(i).getCon();
 			for (Connection connection : con) {
 				if(connection.getOri().equals(neuronJ)){
-					sum+= deltaK(nextLayer,i)* connection.getWei();
+					sum+= nextLayer.getNeuron(i).getDelta()* connection.getWei();
 					break;
 				}
 			}
