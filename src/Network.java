@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Network {
 
 	public static int BIAS = 1;
-	public static float ETA = 0.1f;
+	public static float ETA = 0.8f;
 	private Layer inputLayer;
 	private ArrayList<Layer> hidenLayers;
 	private Layer outputLayer;
@@ -109,11 +109,18 @@ public class Network {
 			for (int j=0;j< neurons.size();j++) {
 				double del=deltaJ(layer, j, nextLayer);
 				layer.getNeuron(j).setDelta(del);
+			}
+		}
+		for (int i=hidenLayers.size()-1;i>=0;i--) {
+			Layer layer = hidenLayers.get(i);
+			ArrayList<Neuron> neurons= layer.getNeurons();
+			for (int j=0;j< neurons.size();j++) {
+				double del=layer.getNeuron(j).getDelta();
+				
 				ArrayList<Connection> cons = layer.getNeuron(j).getCon();
 				for (Connection connection : cons) {
 					connection.addWei(-1*Network.ETA*del*connection.getOri().getOutput());//TODO verificar se o outrput e o do neuron certo
 				}
-				System.out.println("deltaj calcualded for node"+j+" in hiden layer "+i+"is: " + del);
 			}
 		}
 
