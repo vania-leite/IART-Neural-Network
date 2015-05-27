@@ -1,8 +1,9 @@
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class teste {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		Network testNet = new Network();
 		Layer inLayer = new Layer(2, 1);
@@ -68,5 +69,7 @@ public class teste {
 				+ outLayer.getNeurons().get(3).getOutput());
 
 		return;
+		
 	}
+	
 }
