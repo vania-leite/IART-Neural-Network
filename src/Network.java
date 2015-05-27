@@ -3,20 +3,21 @@ import java.util.ArrayList;
 public class Network {
 
 	public static int BIAS = 1;
-	public static float ETA = 0.8f;
+	public static float ETA = 0.1f;
 	private Layer inputLayer;
 	private ArrayList<Layer> hidenLayers;
 	private Layer outputLayer;
-	private ArrayList<Float> targetValues;
+	private ArrayList<Double> targetValues;
 
 	public Network() {
 		hidenLayers = new ArrayList<Layer>();
-		targetValues = new ArrayList<Float>();
+		targetValues = new ArrayList<Double>();
 	}
 
-	public void setTargetValues(ArrayList<Float> target){
-		targetValues=target;
+	public void setTargetValues(ArrayList<Double> target) {
+		targetValues = target;
 	}
+
 	public void replaceInputLayer(Layer layer) {
 		inputLayer = layer;
 	}
@@ -57,10 +58,10 @@ public class Network {
 	}
 
 	public static double sigmoid(double e) {
-		return 1 / (1 + Math.exp(-e));
+		return (1 / (1 + Math.exp(-e)));
 	}
 
-	public void setInputValues(ArrayList<Float> inputs) {
+	public void setInputValues(ArrayList<Double> inputs) {
 		ArrayList<Neuron> temp = inputLayer.getNeurons();
 		int i = 0;
 		for (Neuron neuron : temp) {
@@ -85,86 +86,100 @@ public class Network {
 		}
 		outputLayer.calculateLayer();
 	}
-	
-	public void updateWeights(){
-		
-		
+
+	public void updateWeights() {
+
 		ArrayList<Neuron> neuronsout = outputLayer.getNeurons();
-		for (int j=0;j< neuronsout.size();j++) {
-			double del = deltaK(outputLayer,j);
+		for (int j = 0; j < neuronsout.size(); j++) {
+			double del = deltaK(outputLayer, j);
 			outputLayer.getNeuron(j).setDelta(del);
 		}
-		
-		
-		for (int i=hidenLayers.size()-1;i>=0;i--) {
+
+		for (int i = hidenLayers.size() - 1; i >= 0; i--) {
 			Layer nextLayer;
 			Layer layer = hidenLayers.get(i);
-			if(i+1==hidenLayers.size()){
+			if (i + 1 == hidenLayers.size()) {
 				nextLayer = outputLayer;
+			} else {
+				nextLayer = hidenLayers.get(i + 1);
 			}
-			else{
-				nextLayer = hidenLayers.get(i+1);
-			}
-			ArrayList<Neuron> neurons= layer.getNeurons();
-			for (int j=0;j< neurons.size();j++) {
-				double del=deltaJ(layer, j, nextLayer);
+			ArrayList<Neuron> neurons = layer.getNeurons();
+			for (int j = 0; j < neurons.size(); j++) {
+				double del = deltaJ(layer, j, nextLayer);
 				layer.getNeuron(j).setDelta(del);
 			}
 		}
-		for (int i=hidenLayers.size()-1;i>=0;i--) {
+		for (int i = hidenLayers.size() - 1; i >= 0; i--) {
 			Layer layer = hidenLayers.get(i);
-			ArrayList<Neuron> neurons= layer.getNeurons();
-			for (int j=0;j< neurons.size();j++) {
-				double del=layer.getNeuron(j).getDelta();
-				
+			ArrayList<Neuron> neurons = layer.getNeurons();
+			for (int j = 0; j < neurons.size(); j++) {
+				double del = layer.getNeuron(j).getDelta();
+
 				ArrayList<Connection> cons = layer.getNeuron(j).getCon();
 				for (Connection connection : cons) {
-					connection.addWei(-1*Network.ETA*del*connection.getOri().getOutput());//TODO verificar se o outrput e o do neuron certo
+					connection.addWei(-1 * Network.ETA * del
+							* connection.getOri().getOutput());// TODO verificar
+																// se o outrput
+																// e o do neuron
+																// certo
 				}
+			}
+		}
+		for (int j = 0; j < neuronsout.size(); j++) {
+			double del = outputLayer.getNeuron(j).getDelta();
+			ArrayList<Connection> cons = outputLayer.getNeuron(j).getCon();
+			for (Connection connection : cons) {
+				connection.addWei(-1 * Network.ETA * del
+						* connection.getOri().getOutput());// TODO verificar se
+															// o outrput e o do
+															// neuron certo
 			}
 		}
 
 	}
-	
-	private double deltaK(Layer layer,int k){
-		
+
+	private double deltaK(Layer layer, int k) {
+
 		double outputK = layer.getNeuron(k).getOutput();
 		double targetK = targetValues.get(k);
-		return outputK * (1 -outputK)*(outputK - targetK);
+		return outputK * (1 - outputK) * (outputK - targetK);
 	}
-	private double deltaJ(Layer layer,int j,Layer nextLayer){
-		
-		Neuron neuronJ= layer.getNeuron(j);
+
+	private double deltaJ(Layer layer, int j, Layer nextLayer) {
+
+		Neuron neuronJ = layer.getNeuron(j);
 		double outputJ = neuronJ.getOutput();
-		double sum=0.0;
-		for(int i=0;i < nextLayer.getNeurons().size();i++){
-			
+		double sum = 0.0;
+		for (int i = 0; i < nextLayer.getNeurons().size(); i++) {
+
 			ArrayList<Connection> con = nextLayer.getNeuron(i).getCon();
 			for (Connection connection : con) {
-				if(connection.getOri().equals(neuronJ)){
-					sum+= nextLayer.getNeuron(i).getDelta()* connection.getWei();
+				if (connection.getOri().equals(neuronJ)) {
+					sum += nextLayer.getNeuron(i).getDelta()
+							* connection.getWei();
 					break;
 				}
 			}
-			
+
 		}
-		
-		return sum*outputJ*(1- outputJ);
+
+		return sum * outputJ * (1 - outputJ);
 	}
 
-	public double calculateError(ArrayList<Float> targetValues) {
-		
-		
-		if(outputLayer.getNeurons().size() != targetValues.size()){
-			System.out.println("Error, output size and target values sizer are diferent");
+	public double calculateError(ArrayList<Double> targetValues) {
+
+		if (outputLayer.getNeurons().size() != targetValues.size()) {
+			System.out
+					.println("Error, output size and target values sizer are diferent");
 			return -1;
 		}
-		double error=0;
-		for(int i=0;i<targetValues.size();i++){
-			error+=Math.pow(outputLayer.getNeurons().get(i).getOutput() - targetValues.get(i), 2);
+		double error = 0;
+		for (int i = 0; i < targetValues.size(); i++) {
+			error += Math.pow(outputLayer.getNeurons().get(i).getOutput()
+					- targetValues.get(i), 2);
 		}
-		error= error/2;
-		
+		error = error / 2;
+
 		return error;
 	}
 }
