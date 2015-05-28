@@ -4,7 +4,7 @@ import java.util.Random;
 public class Neuron {
 
 	private ArrayList<Connection> inputFrom;
-	private float inputValue;
+	private double inputValue;
 	private float biasWeight;
 	private double output;
 	private boolean input;
@@ -46,7 +46,7 @@ public class Neuron {
 		inputFrom.add(con);
 	}
 
-	public void addInptVal(float f) {
+	public void addInptVal(double f) {
 		inputValue = f;
 	}
 
