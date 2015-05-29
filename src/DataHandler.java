@@ -1,10 +1,9 @@
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class DataHandler {
@@ -31,6 +30,18 @@ public class DataHandler {
 		}
 		
 		
+	}
+	public static int getRandomData(){
+		ArrayList<Integer> vlds= new ArrayList<Integer>(); 
+		for (int i=0;i<1000;i++) {
+			if(!coord.get(i).isUsed()){
+				vlds.add(i);
+			}
+			
+		}
+		  Random rand = new Random();
+		    int randomNum = rand.nextInt(vlds.size());
+		    return vlds.get(randomNum);
 	}
 	
 	

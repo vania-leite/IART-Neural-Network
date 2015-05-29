@@ -19,6 +19,7 @@ public class Neuron {
 			inputFrom = new ArrayList<Connection>();
 			Random rd = new Random();
 			biasWeight = rd.nextFloat() * 2 - 1;
+
 			this.input = false;
 		}
 	}
@@ -28,6 +29,8 @@ public class Neuron {
 		if (input) {
 			
 			output=inputValue;
+			output += biasWeight * Network.BIAS;
+			output = Network.sigmoid(output);
 
 		} else {
 			for (Connection connection : inputFrom) {
@@ -40,6 +43,9 @@ public class Neuron {
 
 		}
 		
+	}
+	public void addBiasWeight(double f){
+		biasWeight+=f;
 	}
 
 	public void addCon(Connection con) {

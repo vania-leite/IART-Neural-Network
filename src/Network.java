@@ -58,6 +58,7 @@ public class Network {
 	}
 
 	public static double sigmoid(double e) {
+		// return (1.7159 * Math.tanh((2/3)*e) + 0.1*e);
 		return (1 / (1 + Math.exp(-e)));
 	}
 
@@ -109,7 +110,7 @@ public class Network {
 				layer.getNeuron(j).setDelta(del);
 			}
 		}
-		for (int i = hidenLayers.size() - 1; i >= 0; i--) {
+		for (int i = 0; i < hidenLayers.size(); i++) {
 			Layer layer = hidenLayers.get(i);
 			ArrayList<Neuron> neurons = layer.getNeurons();
 			for (int j = 0; j < neurons.size(); j++) {
@@ -123,6 +124,9 @@ public class Network {
 																// e o do neuron
 																// certo
 				}
+
+				layer.getNeuron(j).addBiasWeight(
+						-1 * Network.ETA * del * Network.BIAS);
 			}
 		}
 		for (int j = 0; j < neuronsout.size(); j++) {
@@ -134,6 +138,8 @@ public class Network {
 															// o outrput e o do
 															// neuron certo
 			}
+			outputLayer.getNeuron(j).addBiasWeight(
+					-1 * Network.ETA * del * Network.BIAS);
 		}
 
 	}
@@ -166,7 +172,7 @@ public class Network {
 		return sum * outputJ * (1 - outputJ);
 	}
 
-	public double calculateError(ArrayList<Double> targetValues) {
+	public double calculateError() {
 
 		if (outputLayer.getNeurons().size() != targetValues.size()) {
 			System.out
@@ -178,7 +184,6 @@ public class Network {
 			error += Math.pow(outputLayer.getNeurons().get(i).getOutput()
 					- targetValues.get(i), 2);
 		}
-		error = error / 2;
 
 		return error;
 	}

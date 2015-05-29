@@ -5,11 +5,13 @@ import java.util.Random;
 
 public class teste {
 
+	static int NLINES = 1000;
+
 	public static void main(String[] args) throws IOException {
 
 		Network testNet = new Network();
 		Layer inLayer = new Layer(68, 1);
-		Layer hLayer1 = new Layer(100, 2);
+		Layer hLayer1 = new Layer(50, 2);
 		Layer outLayer = new Layer(33, 3);
 
 		testNet.replaceInputLayer(inLayer);
@@ -20,55 +22,63 @@ public class teste {
 		testNet.printNet();
 
 		DataHandler.loadTrainingInputs();
-		
+
 		System.out.println(DataHandler.coord.size());
-		Random rd= new Random();
-		int k = (int) (rd.nextDouble()*1000);
+		Random rd = new Random();
+		int k = 0;
+		int printErrorEveryXSet = 100;
+		long nSetRuns = 0;
 		ArrayList<Double> targetValues;
-		targetValues = DataHandler.coord.get(k).getTargetValues();
 		ArrayList<Double> inps;
-		inps = DataHandler.coord.get(k).getInput();
-
-		testNet.setInputValues(inps);
-		testNet.setTargetValues(targetValues);
-
-		int tenper = 100000;
-		int i = 0;
-		double error;
-		for(int q=0;q<targetValues.size();q++){
-			if(targetValues.get(q) == 1.0){
-				System.out.println("Neuron "+q+"is expected as on");
-			}
-		}
+		double error = 0.0;
 		do {
+			error = 0.0;
+			int te = DataHandler.getRandomData();
+			inps = DataHandler.coord.get(te).getInput();
+			targetValues = DataHandler.coord.get(te).getTargetValues();
+
+
+			testNet.setInputValues(inps);
+			testNet.setTargetValues(targetValues);
 			testNet.calculate();
 			testNet.updateWeights();
-			error = testNet.calculateError(targetValues);
-			if (i % tenper == 0) {
-				System.out.println("Error: " + error);
-				for (int j = 0; j < 33; j++) {
-					System.out.print("Final value" + j + ": "
-							+ outLayer.getNeurons().get(j).getOutput());
-					if (outLayer.getNeurons().get(j).getOutput() > 0.7)
-						System.out.println(" ---ON");
-					else {
-						System.out.println("");
-					}
+			double curError = testNet.calculateError();
+			DataHandler.coord.get(te).setAsUsed();
+			DataHandler.coord.get(te).setError(curError);
+
+			k++;
+			if (k == NLINES) {
+
+				k = 0;
+				// calcular erro
+				for (int i = 0; i < NLINES; i++) {
+					error += DataHandler.coord.get(i).getError();
+					DataHandler.coord.get(i).resetTemps();
 				}
-
+				error = error / (2 * NLINES);
+				if (nSetRuns % printErrorEveryXSet == 0) {
+					System.out.println("Error: " + error);
+				}
+				nSetRuns++;
 			}
-			i++;
+		} while (nSetRuns < 1200 || k != 0);
+		int rdi;
+		for (int j = 0; j < 3; j++) {
 
-		} while (i < 1000000);
-		System.out.println("Leaving cicle");
-		System.out.println("Error: " + error);
-		for (int j = 0; j < 33; j++) {
-			System.out.print("Final value" + j + ": "
-					+ outLayer.getNeurons().get(j).getOutput());
-			if (outLayer.getNeurons().get(j).getOutput() > 0.7)
-				System.out.println(" ---ON");
-			else {
-				System.out.println("");
+			rdi = rd.nextInt(NLINES);
+			targetValues = DataHandler.coord.get(rdi).getTargetValues();
+			inps = DataHandler.coord.get(rdi).getInput();
+			testNet.setInputValues(inps);
+			testNet.setTargetValues(targetValues);
+			testNet.calculate();
+			for (int i = 0; i <33; i++) {
+				if (targetValues.get(i) == 1.0) {
+					System.out.println("Neuro " + i + " should be on");
+				}
+			}
+			for (int i = 0; i < 33; i++) {
+				System.out.println("Output " + i + ": "
+						+ outLayer.getNeuron(i).getOutput());
 			}
 		}
 
