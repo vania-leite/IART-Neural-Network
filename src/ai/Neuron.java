@@ -6,13 +6,17 @@ public class Neuron {
 
 	private ArrayList<Connection> inputFrom;
 	private double inputValue;
+	private double prevOutput;
 	private double biasWeight;
 	private double output;
 	private boolean input;
-	private double delta;
+	private double grad;
+	private double prevGrad;
 
 	public Neuron(boolean input) {
-		delta=0;
+		grad=0;
+		prevGrad=0;
+		prevOutput=0.0;
 		output = 0;
 		if (input) {
 			this.input = true;
@@ -26,7 +30,7 @@ public class Neuron {
 	}
 
 	public void calculateOutput() {
-
+		prevOutput= output;
 		if (input) {
 			
 			output=inputValue;
@@ -60,15 +64,26 @@ public class Neuron {
 	public double getOutput() {
 		return output;
 	}
+	public double getPrevOutput(){
+		
+		return prevOutput;
+	}
 	
 	public ArrayList<Connection> getCon(){
 		return inputFrom;
 	}
-	public void setDelta(double del){
-		this.delta=del;
+	public void setGrad(double gra){
+		setPrevGrad(this.grad);
+		this.grad=gra;
 	}
-	public double getDelta(){
-		return delta;
+	public double getGrad(){
+		return grad;
+	}
+	public void setPrevGrad(double gra){
+		this.prevGrad=gra;
+	}
+	public double getPrevGrad(){
+		return prevGrad;
 	}
 	
 }

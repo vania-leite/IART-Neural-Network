@@ -6,14 +6,14 @@ import java.util.Random;
 
 public class teste {
 
-	static int NLINES = 1000;
+	static int NLINES = 98;
 
 	public static void main(String[] args) throws IOException {
 
 		Network testNet = new Network();
 		Layer inLayer = new Layer(68, 1);
 		Layer hLayer1 = new Layer(10, 2);
-		Layer outLayer = new Layer(33, 3);
+		Layer outLayer = new Layer(7, 3);
 
 		testNet.replaceInputLayer(inLayer);
 		testNet.replaceOutputLayer(outLayer);
@@ -22,12 +22,12 @@ public class teste {
 
 		testNet.printNet();
 
-		DataHandler.loadTrainingInputs(1000);
+		DataHandler.loadTrainingInputs(NLINES);
 
 		System.out.println(DataHandler.coord.size());
 		Random rd = new Random();
 		int k = 0;
-		int printErrorEveryXSet = 100;
+		int printErrorEveryXSet = 1000;
 		long nSetRuns = 0;
 		ArrayList<Double> targetValues;
 		ArrayList<Double> inps;
@@ -62,7 +62,7 @@ public class teste {
 				}
 				nSetRuns++;
 			}
-		} while (nSetRuns < 1000 || k != 0);
+		} while (nSetRuns < 10000 || k != 0);
 		int rdi;
 		for (int j = 0; j < 3; j++) {
 
@@ -72,12 +72,12 @@ public class teste {
 			testNet.setInputValues(inps);
 			testNet.setTargetValues(targetValues);
 			testNet.calculate();
-			for (int i = 0; i <33; i++) {
+			for (int i = 0; i <7; i++) {
 				if (targetValues.get(i) == 1.0) {
 					System.out.println("Neuro " + i + " should be on");
 				}
 			}
-			for (int i = 0; i < 33; i++) {
+			for (int i = 0; i <7; i++) {
 				System.out.println("Output " + i + ": "
 						+ outLayer.getNeuron(i).getOutput());
 			}

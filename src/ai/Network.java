@@ -1,11 +1,12 @@
 package ai;
+
 import java.util.ArrayList;
 
 public class Network {
 
 	public static int BIAS = 1;
-	public static float ETA = 0.9f;
-	public static float M = 0.4f;
+	public static double ETA = 0.05f;
+	public static double M = 0.1f;
 	private Layer inputLayer;
 	private ArrayList<Layer> hidenLayers;
 	private Layer outputLayer;
@@ -60,7 +61,7 @@ public class Network {
 	}
 
 	public static double sigmoid(double e) {
-		//return Math.tanh(e);
+		// return Math.tanh(e);
 		return (1 / (1 + Math.exp(-e)));
 	}
 
@@ -94,8 +95,8 @@ public class Network {
 
 		ArrayList<Neuron> neuronsout = outputLayer.getNeurons();
 		for (int j = 0; j < neuronsout.size(); j++) {
-			double del = deltaK(outputLayer, j);
-			outputLayer.getNeuron(j).setDelta(del);
+			double gra = deltaK(outputLayer, j);
+			outputLayer.getNeuron(j).setGrad(gra);
 		}
 
 		for (int i = hidenLayers.size() - 1; i >= 0; i--) {
@@ -108,19 +109,28 @@ public class Network {
 			}
 			ArrayList<Neuron> neurons = layer.getNeurons();
 			for (int j = 0; j < neurons.size(); j++) {
-				double del = deltaJ(layer, j, nextLayer);
-				layer.getNeuron(j).setDelta(del);
+				double gra = deltaJ(layer, j, nextLayer);
+				layer.getNeuron(j).setGrad(gra);
 			}
 		}
 		for (int i = 0; i < hidenLayers.size(); i++) {
 			Layer layer = hidenLayers.get(i);
 			ArrayList<Neuron> neurons = layer.getNeurons();
 			for (int j = 0; j < neurons.size(); j++) {
-				double del = layer.getNeuron(j).getDelta();
+				double gra = layer.getNeuron(j).getGrad();
+				double prevGra = layer.getNeuron(j).getPrevGrad();
 
 				ArrayList<Connection> cons = layer.getNeuron(j).getCon();
 				for (Connection connection : cons) {
-					connection.addWei(-1 * Network.ETA * del
+					if (gra * connection.getOri().getOutput() * prevGra
+							* connection.getOri().getPrevOutput() > 0) {
+						connection.multiplyLearningRate(1.2);
+					} else if (gra * connection.getOri().getOutput() * prevGra
+							* connection.getOri().getPrevOutput() < 0) {
+						connection.multiplyLearningRate(0.7);
+
+					}
+					connection.addWei(-1 * connection.getLR() * gra
 							* connection.getOri().getOutput());// TODO verificar
 																// se o outrput
 																// e o do neuron
@@ -128,20 +138,30 @@ public class Network {
 				}
 
 				layer.getNeuron(j).addBiasWeight(
-						-1 * Network.ETA * del * Network.BIAS);
+						-1 * Network.ETA * gra * Network.BIAS);
 			}
 		}
 		for (int j = 0; j < neuronsout.size(); j++) {
-			double del = outputLayer.getNeuron(j).getDelta();
+			double gra = outputLayer.getNeuron(j).getGrad();
+			double prevGra = outputLayer.getNeuron(j).getPrevGrad();
+
 			ArrayList<Connection> cons = outputLayer.getNeuron(j).getCon();
 			for (Connection connection : cons) {
-				connection.addWei(-1 * Network.ETA * del
+				if (gra * connection.getOri().getOutput() * prevGra
+						* connection.getOri().getPrevOutput() > 0) {
+					connection.multiplyLearningRate(1.2);
+				} else if (gra * connection.getOri().getOutput() * prevGra
+						* connection.getOri().getPrevOutput() < 0) {
+					connection.multiplyLearningRate(0.7);
+
+				}
+				connection.addWei(-1 * connection.getLR() * gra
 						* connection.getOri().getOutput());// TODO verificar se
 															// o outrput e o do
 															// neuron certo
 			}
 			outputLayer.getNeuron(j).addBiasWeight(
-					-1 * Network.ETA * del * Network.BIAS);
+					-1 * Network.ETA * gra * Network.BIAS);
 		}
 
 	}
@@ -163,8 +183,8 @@ public class Network {
 			ArrayList<Connection> con = nextLayer.getNeuron(i).getCon();
 			for (Connection connection : con) {
 				if (connection.getOri().equals(neuronJ)) {
-					
-					sum += nextLayer.getNeuron(i).getDelta()
+
+					sum += nextLayer.getNeuron(i).getGrad()
 							* connection.getWei();
 					break;
 				}
@@ -190,29 +210,27 @@ public class Network {
 
 		return error;
 	}
-	
-	public double getConnectionWeight(int l1,int n1,int l2,int n2){
-		Layer layer1=null,layer2=null;
-	
-		if(l1>=l2){
+
+	public double getConnectionWeight(int l1, int n1, int l2, int n2) {
+		Layer layer1 = null, layer2 = null;
+
+		if (l1 >= l2) {
 			System.out.println("Invalid input.");
 			return -1;
 		}
-		if(l1==1){
-			layer1=inputLayer;
+		if (l1 == 1) {
+			layer1 = inputLayer;
+		} else {
+			layer1 = hidenLayers.get(l1 - 2);
 		}
-		else{
-			layer1=hidenLayers.get(l1-2);
-		}
-		if(l2==hidenLayers.size()+2){
-			layer2=outputLayer;
-		}
-		else{
-			layer2=hidenLayers.get(l2-2);
+		if (l2 == hidenLayers.size() + 2) {
+			layer2 = outputLayer;
+		} else {
+			layer2 = hidenLayers.get(l2 - 2);
 		}
 		Neuron neuron1, neuron2;
-		neuron1 = layer1.getNeuron(n1-1);
-		neuron2 = layer2.getNeuron(n2-1);
+		neuron1 = layer1.getNeuron(n1 - 1);
+		neuron2 = layer2.getNeuron(n2 - 1);
 		ArrayList<Connection> con = neuron2.getCon();
 		for (Connection connection : con) {
 			if (connection.getOri().equals(neuron1)) {

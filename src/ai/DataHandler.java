@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class DataHandler {
 
-	static String COORD = "coord_learn.txt";
+	static String COORD = "coordsmudadas1.txt";
 	public static ArrayList<Data> coord;
 	static int lastClass = -1;
 	public static int lines;
