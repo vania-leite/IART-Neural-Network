@@ -6,14 +6,14 @@ import java.util.Random;
 
 public class teste {
 
-	static int NLINES = 2;
+	static int NLINES = 1000;
 
 	public static void main(String[] args) throws IOException {
 
 		Network testNet = new Network();
 		Layer inLayer = new Layer(68, 1);
-		Layer hLayer1 = new Layer(40, 2);
-		Layer outLayer = new Layer(7, 3);
+		Layer hLayer1 = new Layer(10, 2);
+		Layer outLayer = new Layer(33, 3);
 
 		testNet.replaceInputLayer(inLayer);
 		testNet.replaceOutputLayer(outLayer);
@@ -62,7 +62,7 @@ public class teste {
 				}
 				nSetRuns++;
 			}
-		} while (nSetRuns < 10000 || k != 0);
+		} while (nSetRuns < 1000 || k != 0);
 		int rdi;
 		for (int j = 0; j < 3; j++) {
 
@@ -72,12 +72,12 @@ public class teste {
 			testNet.setInputValues(inps);
 			testNet.setTargetValues(targetValues);
 			testNet.calculate();
-			for (int i = 0; i <7; i++) {
+			for (int i = 0; i <33; i++) {
 				if (targetValues.get(i) == 1.0) {
 					System.out.println("Neuro " + i + " should be on");
 				}
 			}
-			for (int i = 0; i < 7; i++) {
+			for (int i = 0; i < 33; i++) {
 				System.out.println("Output " + i + ": "
 						+ outLayer.getNeuron(i).getOutput());
 			}

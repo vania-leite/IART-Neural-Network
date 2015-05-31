@@ -6,7 +6,7 @@ public class Neuron {
 
 	private ArrayList<Connection> inputFrom;
 	private double inputValue;
-	private float biasWeight;
+	private double biasWeight;
 	private double output;
 	private boolean input;
 	private double delta;
@@ -19,7 +19,7 @@ public class Neuron {
 		} else {
 			inputFrom = new ArrayList<Connection>();
 			Random rd = new Random();
-			biasWeight = 1;
+			biasWeight = rd.nextDouble() - 0.5;
 
 			this.input = false;
 		}

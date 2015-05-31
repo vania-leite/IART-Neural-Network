@@ -4,8 +4,8 @@ import java.util.ArrayList;
 public class Network {
 
 	public static int BIAS = 1;
-	public static float ETA = 0.01f;
-	public static float M = 0.05f;
+	public static float ETA = 0.9f;
+	public static float M = 0.4f;
 	private Layer inputLayer;
 	private ArrayList<Layer> hidenLayers;
 	private Layer outputLayer;
@@ -60,7 +60,7 @@ public class Network {
 	}
 
 	public static double sigmoid(double e) {
-		// return (1.7159 * Math.tanh((2/3)*e) + 0.1*e);
+		//return Math.tanh(e);
 		return (1 / (1 + Math.exp(-e)));
 	}
 

@@ -15,7 +15,7 @@ public class Connection {
 		this.dest=dest;
 		this.lastDelta=0;
 		Random rd = new Random();
-		this.weight= rd.nextFloat() * 2 -1; //setting wieght to a random number beeween [-1,1]
+		this.weight= rd.nextFloat() -0.5; //setting wieght to a random number beeween [-0.5,0.5]
 		
 	}
 	public Neuron getOri(){
