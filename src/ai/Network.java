@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Network {
 
 	public static int BIAS = 1;
-	public static double ETA = 0.05f;
+	public static double ETA = 0.05f; //learning rate
 	public static double M = 0.1f;
 	private Layer inputLayer;
 	private ArrayList<Layer> hidenLayers;
@@ -17,6 +17,12 @@ public class Network {
 		targetValues = new ArrayList<Double>();
 	}
 
+	public void setM(double momentum){
+		M=momentum;
+	}
+	public void setETA(double lrate){
+		ETA=lrate;
+	}
 	public void setTargetValues(ArrayList<Double> target) {
 		targetValues = target;
 	}
@@ -238,6 +244,21 @@ public class Network {
 			}
 		}
 		return -2;
+
+	}
+	
+	public double getOutValue(int l1, int n1) {
+		Layer layer1 = null, layer2 = null;
+
+		if (l1 == 1) {
+			layer1 = inputLayer;
+		} else {
+			layer1 = hidenLayers.get(l1 - 2);
+		}
+		
+		Neuron neuron1;
+		neuron1 = layer1.getNeuron(n1 - 1);
+		return neuron1.getOutput();
 
 	}
 }

@@ -2,6 +2,8 @@ package ai;
 import java.util.ArrayList;
 import java.util.Random;
 
+import application.Main;
+
 public class Data {
 
 	private int local;
@@ -45,7 +47,7 @@ public class Data {
 
 
 		ArrayList<Double> temp = new ArrayList<Double>();
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < Main.outNodes; i++) {
 			if (i == local - 1) {
 
 				temp.add(1.0);

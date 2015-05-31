@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class DataHandler {
 
-	static String COORD = "coordsmudadas1.txt";
+	static String COORD;
 	public static ArrayList<Data> coord;
 	static int lastClass = -1;
 	public static int lines;
@@ -36,6 +36,9 @@ public class DataHandler {
 
 	}
 
+	public static void setFile(String name){
+		COORD=name;
+	}
 	public static int getRandomData() {
 		Random rand = new Random();
 		int i = rand.nextInt(lines);
