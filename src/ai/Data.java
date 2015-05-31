@@ -45,7 +45,7 @@ public class Data {
 
 
 		ArrayList<Double> temp = new ArrayList<Double>();
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 2; i++) {
 			if (i == local - 1) {
 
 				temp.add(1.0);
