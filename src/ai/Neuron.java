@@ -70,4 +70,5 @@ public class Neuron {
 	public double getDelta(){
 		return delta;
 	}
+	
 }

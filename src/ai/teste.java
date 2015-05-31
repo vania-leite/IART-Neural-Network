@@ -22,7 +22,7 @@ public class teste {
 
 		testNet.printNet();
 
-		DataHandler.loadTrainingInputs();
+		DataHandler.loadTrainingInputs(1000);
 
 		System.out.println(DataHandler.coord.size());
 		Random rd = new Random();

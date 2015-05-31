@@ -163,6 +163,7 @@ public class Network {
 			ArrayList<Connection> con = nextLayer.getNeuron(i).getCon();
 			for (Connection connection : con) {
 				if (connection.getOri().equals(neuronJ)) {
+					
 					sum += nextLayer.getNeuron(i).getDelta()
 							* connection.getWei();
 					break;
@@ -188,5 +189,37 @@ public class Network {
 		}
 
 		return error;
+	}
+	
+	public double getConnectionWeight(int l1,int n1,int l2,int n2){
+		Layer layer1=null,layer2=null;
+	
+		if(l1>=l2){
+			System.out.println("Invalid input.");
+			return -1;
+		}
+		if(l1==1){
+			layer1=inputLayer;
+		}
+		else{
+			layer1=hidenLayers.get(l1-2);
+		}
+		if(l2==hidenLayers.size()+2){
+			layer2=outputLayer;
+		}
+		else{
+			layer2=hidenLayers.get(l2-2);
+		}
+		Neuron neuron1, neuron2;
+		neuron1 = layer1.getNeuron(n1-1);
+		neuron2 = layer2.getNeuron(n2-1);
+		ArrayList<Connection> con = neuron2.getCon();
+		for (Connection connection : con) {
+			if (connection.getOri().equals(neuron1)) {
+				return connection.getWei();
+			}
+		}
+		return -2;
+
 	}
 }

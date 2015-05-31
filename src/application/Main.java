@@ -95,6 +95,7 @@ public class Main extends Application {
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
+				grid.getChildren().remove(hbBtn);
 				// TODO: ADD CODE FOR DELETING THE FIRST BUTTON ("Next step...")
 				if (nrHiddenText.getText().matches("[0-9]*")) {
 					nrHLayers = Integer.parseInt(nrHiddenText.getText());
@@ -116,7 +117,7 @@ public class Main extends Application {
 				// ????
 				actiontarget.setOnAction(new EventHandler<ActionEvent>() {
 					public void handle(ActionEvent event) {
-
+						grid.getChildren().remove(actiontarget);
 						// TODO: ADD CODE FOR DELETING THE SECOND BUTTON
 						// ("Start")
 						// get the values for the number of nodes per hidden
@@ -138,7 +139,7 @@ public class Main extends Application {
 						}
 						testNet.createConnections();
 						try {
-							DataHandler.loadTrainingInputs();
+							DataHandler.loadTrainingInputs(1000);
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -222,7 +223,6 @@ public class Main extends Application {
 						grid.add(labelLayer2, 2, 10);
 						TextField TextLayer2 = new TextField();
 						grid.add(TextLayer2, 3, 10);
-
 						// get output values
 						Label labeloutValues = new Label("Output results:");
 						grid.add(labeloutValues, 1, 11);
@@ -239,9 +239,20 @@ public class Main extends Application {
 						// TODO make the handle receive the nodes and be able to
 						// execute again with new values ????
 						showWeight.setOnAction(new EventHandler<ActionEvent>() {
+							
 							public void handle(ActionEvent event) {
-								Label labelWeight = new Label("cenas");
-								grid.add(labelWeight, 0, 16);
+								int l1 = Integer.parseInt(TextLayer1.getText());
+								int n1 = Integer.parseInt(TextNode1.getText());
+								int l2 = Integer.parseInt(TextLayer2.getText());
+								int n2 = Integer.parseInt(TextNode2.getText());
+								double weiConnection = testNet
+										.getConnectionWeight(l1, n1, l2, n2);
+								if ((weiConnection != -1 || weiConnection != -2)) {
+									Label labelWeight = new Label(""
+											+ weiConnection);
+									grid.add(labelWeight, 0, 16);
+								}
+
 							}
 
 						});

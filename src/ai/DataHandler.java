@@ -11,8 +11,10 @@ public class DataHandler {
 	static String COORD = "coordsmudadas.txt";
 	public static ArrayList<Data> coord;
 	static int lastClass = -1;
+	public static int lines;
 
-	public static void loadTrainingInputs() throws IOException {
+	public static void loadTrainingInputs(int l) throws IOException {
+		lines=l;
 		coord = new ArrayList<Data>();
 		FileInputStream is = new FileInputStream(COORD);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -21,7 +23,7 @@ public class DataHandler {
 		ArrayList<Double> thisInp = new ArrayList<Double>();
 		Data thisData;
 		int k=0;
-		while ((line = reader.readLine()) != null && k <teste.NLINES) {
+		while ((line = reader.readLine()) != null && k <lines) {
 			thisLine = line.split(",");
 			for (int i = 0; i < 68; i++) {
 				thisInp.add(Double.valueOf(thisLine[i]));
@@ -36,10 +38,10 @@ public class DataHandler {
 
 	public static int getRandomData() {
 		Random rand = new Random();
-		int i = rand.nextInt(teste.NLINES);
+		int i = rand.nextInt(lines);
 		int k = 0;
 		ArrayList<Integer> values = new ArrayList<Integer>();
-		while (k < teste.NLINES) {
+		while (k < lines) {
 			if (!coord.get(i).isUsed()) {
 				values.add(i);
 				if (coord.get(i).getLocal() != lastClass) {
@@ -49,7 +51,7 @@ public class DataHandler {
 			}
 
 			i++;
-			if (i == teste.NLINES) {
+			if (i == lines) {
 				i = 0;
 			}
 			k++;
@@ -57,6 +59,14 @@ public class DataHandler {
 		
 		int randN = rand.nextInt(values.size());
 		return randN;
+	}
+	
+	public int getLines(){
+		return lines;
+	}
+	
+	public void setLines(int l){
+		lines=l;
 	}
 
 }
